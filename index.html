@@ -1,0 +1,225 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+body {
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+
+  /* 💖 LOVE BACKGROUND */
+  background: url('https://images.unsplash.com/photo-1518199266791-5375a83190b7') no-repeat center center/cover;
+}
+
+/* dark overlay for readability */
+body::before {
+  content:"";
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:-1;
+}
+
+.screen { display:none; padding:40px 20px; }
+.active { display:block; }
+
+button {
+  padding:12px 25px;
+  border:none;
+  border-radius:12px;
+  background:#ff4d6d;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(255,0,100,0.6);
+}
+
+.word {
+  display:inline-block;
+  padding:10px;
+  margin:5px;
+  background:#ff4d6d;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+#answerBox {
+  margin-top:20px;
+  min-height:40px;
+  border-bottom:2px solid white;
+}
+
+/* hearts */
+.heart {
+  position:absolute;
+  font-size:28px;
+  cursor:pointer;
+}
+
+/* music button */
+#musicBtn {
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#222;
+}
+
+/* smooth text */
+.fade {
+  animation: fadeIn 1.5s;
+}
+
+@keyframes fadeIn {
+  from {opacity:0;}
+  to {opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgMusic" loop preload="auto">
+  <source src="./music.mp3" type="audio/mpeg">
+</audio>
+
+<button id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+<!-- Stage 1 -->
+<div id="s1" class="screen active fade">
+  <h1>Hey ❤️</h1>
+  <p>I made something for you...</p>
+  <button id="startBtn">Start</button>
+</div>
+
+<!-- Stage 2 -->
+<div id="s2" class="screen">
+  <h2>Tap words to form a memory 💭</h2>
+
+  <div>
+    <span class="word" onclick="addWord(this)">best</span>
+    <span class="word" onclick="addWord(this)">day</span>
+    <span class="word" onclick="addWord(this)">we</span>
+    <span class="word" onclick="addWord(this)">met</span>
+  </div>
+
+  <div id="answerBox"></div>
+  <p id="hint"></p>
+</div>
+
+<!-- Stage 3 -->
+<div id="s3" class="screen">
+  <h2>Catch 5 hearts ❤️</h2>
+  <p><span id="count">0</span>/5</p>
+</div>
+
+<!-- Stage 4 -->
+<div id="s4" class="screen">
+  <h2 id="typing"></h2>
+  <button onclick="next(5)">Continue ❤️</button>
+</div>
+
+<!-- Stage 5 -->
+<div id="s5" class="screen">
+  <h1>I still choose you ❤️</h1>
+  <p>You matter to me… more than you think.</p>
+</div>
+
+<script>
+let current = 1;
+
+/* START BUTTON (fix autoplay issue) */
+document.getElementById("startBtn").addEventListener("click", function() {
+  let music = document.getElementById("bgMusic");
+  music.volume = 0.4;
+
+  music.play().catch(() => {
+    alert("Tap again to enable sound 🔊");
+  });
+
+  next(2);
+});
+
+function next(n){
+  document.getElementById("s"+current).classList.remove("active");
+  current = n;
+  document.getElementById("s"+current).classList.add("active");
+
+  if(n===3) startHearts();
+  if(n===4) typeText();
+}
+
+/* MUSIC TOGGLE */
+function toggleMusic(){
+  let m=document.getElementById("bgMusic");
+  m.paused ? m.play() : m.pause();
+}
+
+/* PUZZLE */
+let answer="";
+function addWord(el){
+  answer += el.innerText + " ";
+  document.getElementById("answerBox").innerText = answer;
+
+  if(answer.includes("we") && answer.includes("met")){
+    document.getElementById("hint").innerText="❤️ Perfect...";
+    setTimeout(()=>next(3),1000);
+  }
+}
+
+/* HEART GAME */
+let c=0;
+function startHearts(){
+  c=0;
+  let interval=setInterval(()=>{
+    let h=document.createElement("div");
+    h.innerHTML="❤️";
+    h.className="heart";
+
+    h.style.left=Math.random()*(window.innerWidth-50)+"px";
+    h.style.top=Math.random()*(window.innerHeight-50)+"px";
+
+    h.onclick=()=>{
+      h.remove();
+      c++;
+      document.getElementById("count").innerText=c;
+
+      if(c>=5){
+        clearInterval(interval);
+        next(4);
+      }
+    };
+
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),2000);
+
+  },700);
+}
+
+/* TYPING MESSAGE */
+function typeText(){
+  let txt="Even when things feel different... I still care about us ❤️";
+  let i=0;
+  let el=document.getElementById("typing");
+  el.innerHTML="";
+
+  function t(){
+    if(i<txt.length){
+      el.innerHTML+=txt[i++];
+      setTimeout(t,40);
+    }
+  }
+  t();
+}
+</script>
+
+</body>
+</html>
+```
