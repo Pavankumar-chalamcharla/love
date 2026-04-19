@@ -1,0 +1,219 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+/* 🌈 Animated background */
+body {
+  margin:0;
+  font-family: 'Comic Sans MS', cursive;
+  color:white;
+  text-align:center;
+  overflow:hidden;
+
+  background: linear-gradient(-45deg, #ff6b81, #ff9a9e, #fad0c4, #ffdde1);
+  background-size: 400% 400%;
+  animation: gradient 10s ease infinite;
+}
+
+@keyframes gradient {
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* Screens */
+.screen { display:none; padding:40px 20px; }
+.active { display:block; }
+
+/* Buttons */
+button {
+  padding:12px 25px;
+  border:none;
+  border-radius:20px;
+  background:#ff4d6d;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(255,0,100,0.8);
+  transition:0.3s;
+}
+
+button:hover {
+  transform:scale(1.1);
+}
+
+/* Floating hearts */
+.heart {
+  position:absolute;
+  font-size:26px;
+  animation: float 6s linear infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(100vh); opacity:1; }
+  100% { transform: translateY(-10vh); opacity:0; }
+}
+
+/* Words */
+.word {
+  display:inline-block;
+  padding:10px;
+  margin:6px;
+  background:#ff4d6d;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+/* Answer box */
+#answerBox {
+  margin-top:20px;
+  font-size:22px;
+}
+
+/* Music button */
+#musicBtn {
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#222;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<button id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+<!-- 💖 Stage 1 -->
+<div id="s1" class="screen active">
+  <h1>Heyy ❤️</h1>
+  <p>I made this just for you 😚</p>
+  <button id="startBtn">Start 💖</button>
+</div>
+
+<!-- 💭 Stage 2 -->
+<div id="s2" class="screen">
+  <h2>Make a cute sentence 🥺</h2>
+
+  <span class="word" onclick="addWord(this)">I</span>
+  <span class="word" onclick="addWord(this)">love</span>
+  <span class="word" onclick="addWord(this)">you</span>
+
+  <div id="answerBox"></div>
+</div>
+
+<!-- 💓 Stage 3 -->
+<div id="s3" class="screen">
+  <h2>Catch 5 hearts 💖</h2>
+  <p><span id="count">0</span>/5</p>
+</div>
+
+<!-- ✍️ Stage 4 -->
+<div id="s4" class="screen">
+  <h2 id="typing"></h2>
+  <button onclick="next(5)">Continue 💖</button>
+</div>
+
+<!-- 💞 Final -->
+<div id="s5" class="screen">
+  <h1>I love you ❤️</h1>
+  <p>You make everything better 🥺</p>
+</div>
+
+<script>
+let current = 1;
+
+/* 🎵 Start experience */
+document.getElementById("startBtn").onclick = function(){
+  let music = document.getElementById("bgMusic");
+  music.volume = 0.5;
+
+  music.play().catch(() => {
+    alert("Tap again to enable sound 🔊");
+  });
+
+  next(2);
+};
+
+/* Navigation */
+function next(n){
+  document.getElementById("s"+current).classList.remove("active");
+  current = n;
+  document.getElementById("s"+current).classList.add("active");
+
+  if(n===3) startGame();
+  if(n===4) typeText();
+}
+
+/* 🎵 Music toggle */
+function toggleMusic(){
+  let m = document.getElementById("bgMusic");
+  m.paused ? m.play() : m.pause();
+}
+
+/* 💭 Puzzle */
+let ans="";
+function addWord(el){
+  ans += el.innerText + " ";
+  document.getElementById("answerBox").innerText = ans;
+
+  if(ans.includes("love you")){
+    setTimeout(()=>next(3),800);
+  }
+}
+
+/* 💓 Heart game */
+let c=0;
+function startGame(){
+  c=0;
+  let interval = setInterval(()=>{
+    let h = document.createElement("div");
+    h.innerHTML = "💖";
+    h.className = "heart";
+
+    h.style.left = Math.random()*window.innerWidth + "px";
+
+    h.onclick = ()=>{
+      h.remove();
+      c++;
+      document.getElementById("count").innerText = c;
+
+      if(c>=5){
+        clearInterval(interval);
+        next(4);
+      }
+    };
+
+    document.body.appendChild(h);
+  },500);
+}
+
+/* ✍️ Typing effect */
+function typeText(){
+  let txt = "You make my world brighter every single day ❤️";
+  let i = 0;
+  let el = document.getElementById("typing");
+  el.innerHTML = "";
+
+  function t(){
+    if(i < txt.length){
+      el.innerHTML += txt[i++];
+      setTimeout(t,50);
+    }
+  }
+  t();
+}
+</script>
+
+</body>
+</html>
+```
